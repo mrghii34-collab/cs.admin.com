@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #eef; max-width: 600px; margin: auto; }
+  input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; }
+  button { padding: 12px 25px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  button:hover { background: #0056b3; }
+</style>
+</head>
+<body>
+
+<h2>Admin Panel</h2>
+
+<label>অ্যাপের নাম:</label>
+<input type="text" id="appName" placeholder="অ্যাপের নাম লিখুন">
+
+<label>ইনস্ট্রাকশন:</label>
+<textarea id="instructions" placeholder="অ্যাপ ব্যবহারের নির্দেশ লিখুন"></textarea>
+
+<label>ডাউনলোড লিংক:</label>
+<input type="text" id="downloadLink" placeholder="ডাউনলোড লিংক">
+
+<label>App Status:</label>
+<select id="appStatus">
+  <option value="on">ON</option>
+  <option value="off">OFF</option>
+</select>
+
+<button onclick="saveData()">সেভ করুন</button>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCtDWs_Ft0e2NcU-dtwaWPfy-gAXa0azQg",
+    authDomain: "tanzim-main-admin-app.firebaseapp.com",
+    databaseURL: "https://tanzim-main-admin-app-default-rtdb.firebaseio.com",
+    projectId: "tanzim-main-admin-app",
+    storageBucket: "tanzim-main-admin-app.appspot.com",
+    messagingSenderId: "12436676722",
+    appId: "1:12436676722:web:f066ffbc343f0117eea2eb",
+    measurementId: "G-QKK68SK6BN"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // ডেটা লোড করা
+  db.ref('appData').on('value', snapshot => {
+    const data = snapshot.val();
+    if(data) {
+      document.getElementById('appName').value = data.name || '';
+      document.getElementById('instructions').value = data.instructions || '';
+      document.getElementById('downloadLink').value = data.downloadLink || '';
+      document.getElementById('appStatus').value = data.status || 'on';
+    }
+  });
+
+  function saveData() {
+    const name = document.getElementById('appName').value;
+    const instructions = document.getElementById('instructions').value;
+    const downloadLink = document.getElementById('downloadLink').value;
+    const status = document.getElementById('appStatus').value; // on/off
+
+    db.ref('appData').set({
+      name,
+      instructions,
+      downloadLink,
+      status
+    }).then(() => {
+      alert('ডেটা সফলভাবে সেভ হয়েছে ✅');
+    }).catch(err => {
+      alert('এরর: ' + err.message);
+    });
+  }
+</script>
+
+</body>
+</html>
